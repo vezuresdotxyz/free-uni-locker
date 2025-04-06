@@ -16,6 +16,7 @@ import { CollectFeesModal } from "@/components/collect-fees-modal"
 import { Spinner } from "@/components/spinner"
 import { getUserPositions, getLockedPositions, getLockedPositionById } from "@/lib/mock-contract-data"
 import type { Position, LockedPosition } from "@/lib/types"
+import { Footer } from "@/components/footer"
 
 /**
  * Main application component for the Uniswap V3 LP NFT Locker
@@ -147,56 +148,61 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center">
-      <div className="w-full max-w-[720px] px-4 py-6 relative z-10">
-        <Header isConnected={isConnected} onConnectToggle={handleConnectToggle} />
+    <main className="bg-gray-100 dark:bg-gray-800 min-h-screen">
+      <div className="flex max-w-[1000px] flex-col justify-center p-20 m-auto">
+        <div className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-2 py-6 relative z-10">
+          <div className="w-full px-4 relative z-10">
+            <Header isConnected={isConnected} onConnectToggle={handleConnectToggle} />
 
-        {isConnected ? (
-          <Tabs defaultValue="positions" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="positions">Your Positions</TabsTrigger>
-              <TabsTrigger value="locked">Locked Positions</TabsTrigger>
-            </TabsList>
+            {isConnected ? (
+              <Tabs defaultValue="positions" value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-2">
+                  <TabsTrigger value="positions">Your Positions</TabsTrigger>
+                  <TabsTrigger value="locked">Locked Positions</TabsTrigger>
+                </TabsList>
 
-            <TabsContent value="positions">
-              {isLoading ? (
-                <div className="flex justify-center p-8 border rounded-md bg-white dark:bg-gray-800">
-                  <Spinner />
-                </div>
-              ) : (
-                <PositionsTable
-                  positions={userPositions}
-                  onLock={(id) => {
-                    setSelectedNFT(id)
-                    setLockModalOpen(true)
-                  }}
-                />
-              )}
-            </TabsContent>
+                <TabsContent value="positions">
+                  {isLoading ? (
+                    <div className="flex justify-center p-8 border rounded-md bg-white dark:bg-gray-800">
+                      <Spinner />
+                    </div>
+                  ) : (
+                    <PositionsTable
+                      positions={userPositions}
+                      onLock={(id) => {
+                        setSelectedNFT(id)
+                        setLockModalOpen(true)
+                      }}
+                    />
+                  )}
+                </TabsContent>
 
-            <TabsContent value="locked">
-              {isLoading ? (
-                <div className="flex justify-center p-8 border rounded-md bg-white dark:bg-gray-800">
-                  <Spinner />
-                </div>
-              ) : (
-                <LockedPositionsTable
-                  positions={lockedPositions}
-                  onManage={handleManage}
-                  onOpenManageModal={handleOpenManageModal}
-                  onCollectFees={handleCollectFees}
-                />
-              )}
-            </TabsContent>
-          </Tabs>
-        ) : (
-          <div className="flex flex-col items-center justify-center p-8 border rounded-md bg-white dark:bg-gray-800">
-            <p className="mb-4 text-sm">Connect your wallet to view and manage yourLP positions</p>
-            <Button onClick={handleConnectToggle} variant="outline" size="sm">
-              Connect Wallet
-            </Button>
+                <TabsContent value="locked">
+                  {isLoading ? (
+                    <div className="flex justify-center p-8 border rounded-md bg-white dark:bg-gray-800">
+                      <Spinner />
+                    </div>
+                  ) : (
+                    <LockedPositionsTable
+                      positions={lockedPositions}
+                      onManage={handleManage}
+                      onOpenManageModal={handleOpenManageModal}
+                      onCollectFees={handleCollectFees}
+                    />
+                  )}
+                </TabsContent>
+              </Tabs>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-8 border rounded-md bg-white dark:bg-gray-800">
+                <p className="mb-4 text-sm">Connect your wallet to view and manage yourLP positions</p>
+                <Button onClick={handleConnectToggle} variant="outline" size="sm">
+                  Connect Wallet
+                </Button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
+        <Footer />
       </div>
 
       {/* Modals */}
