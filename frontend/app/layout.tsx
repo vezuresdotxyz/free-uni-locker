@@ -16,13 +16,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://lp-nft-locker.vercel.app/",
+    url: "https://freelplocker.com/",
     title: "LP NFT Locker",
-    description: "Free, open-source LP NFT locker with no fees. Lock your liquidity positions securely.",
+    description: "A free, open-source LP NFT locker with no fees. Lock your liquidity positions securely.",
     siteName: "LP NFT Locker",
     images: [
       {
-        url: "https://lp-nft-locker.vercel.app/og-image.png",
+        url: "https://freelplocker.com/og-image.png",
         width: 1200,
         height: 630,
         alt: "LP NFT Locker",
@@ -32,16 +32,15 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "LP NFT Locker",
-    description: "Free, open-source LP NFT locker with no fees. Lock your liquidity positions securely.",
-    images: ["https://lp-nft-locker.vercel.app/og-image.png"],
+    description: "A free, open-source LP NFT locker with no fees. Lock your liquidity positions securely.",
+    images: ["https://freelplocker.com/og-image.png"],
     creator: "@lpnftlocker",
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
   },
-  manifest: "https://lp-nft-locker.vercel.app/site.webmanifest",
 }
 
 export default function RootLayout({
