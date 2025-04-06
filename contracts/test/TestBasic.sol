@@ -6,5 +6,8 @@ import {MockERC20} from "contracts/mocks/MockERC20.sol";
 import {Test} from "lib/forge-std/src/Test.sol";
 
 contract TestBasic is Test {
-// todo
+  // todo
+  function test_basic() public {
+    // hello world
+  }
 }
