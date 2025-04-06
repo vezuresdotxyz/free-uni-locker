@@ -12,9 +12,9 @@
 
 pragma solidity ^0.8.0;
 
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import {
@@ -28,14 +28,18 @@ import {IClPoolFactory} from "contracts/interfaces/thirdparty/IClPoolFactory.sol
 /// @title FreeUniV3LPLocker
 /// @notice A free and open source contract for locking Uniswap V3 LP positions
 /// @dev Implements the IFreeUniV3LPLocker interface
-contract FreeUniV3LPLocker is IFreeUniV3LPLocker, ReentrancyGuard, Context {
+contract FreeUniV3LPLocker is IFreeUniV3LPLocker, ReentrancyGuard, Ownable {
   using SafeERC20 for IERC20;
   using EnumerableSet for EnumerableSet.UintSet;
+  using EnumerableSet for EnumerableSet.AddressSet;
 
   uint256 public nextLockId = 1;
 
   /// lock details
   mapping(uint256 lockId => LockInfo) public locks;
+
+  /// List of allowed position managers
+  EnumerableSet.AddressSet private positionManagers;
 
   /// List of lock ids for user
   mapping(address => EnumerableSet.UintSet) private userLocks;
@@ -46,6 +50,21 @@ contract FreeUniV3LPLocker is IFreeUniV3LPLocker, ReentrancyGuard, Context {
     require(lockId < nextLockId, "Invalid lockId");
     require(locks[lockId].owner == _msgSender(), "Not lock owner");
     _;
+  }
+
+  constructor(address who) Ownable(who) {}
+
+  /// @notice Adds a position manager to the allowed list
+  /// @param positionManager_ The address of the position manager to add
+  function addAllowedPositionManager(address positionManager_) external onlyOwner {
+    positionManagers.add(positionManager_);
+  }
+
+  /// @notice Checks if a position manager is allowed
+  /// @param positionManager_ The address of the position manager
+  /// @return isAllowed True if the position manager is allowed, false otherwise
+  function isAllowedPositionManager(address positionManager_) public view returns (bool) {
+    return positionManagers.contains(positionManager_);
   }
 
   /// @notice Gets the pool address for a given NFT position
@@ -169,7 +188,6 @@ contract FreeUniV3LPLocker is IFreeUniV3LPLocker, ReentrancyGuard, Context {
     require(collector_ != address(0), "CollectAddress invalid");
     require(endTime_ > block.timestamp, "EndTime <= currentTime");
 
-    nftManager_.safeTransferFrom(_msgSender(), address(this), nftId_);
     address pool = _getPool(INonfungiblePositionManager(address(nftManager_)), nftId_);
 
     LockInfo memory newLock = LockInfo({
@@ -245,6 +263,7 @@ contract FreeUniV3LPLocker is IFreeUniV3LPLocker, ReentrancyGuard, Context {
     override
     returns (bytes4)
   {
+    require(isAllowedPositionManager(msg.sender), "Not allowed");
     if (data.length > 0) {
       (address collector, uint256 endTime) = abi.decode(data, (address, uint256));
       _lock(INonfungiblePositionManager(msg.sender), tokenId, from, collector, endTime);
