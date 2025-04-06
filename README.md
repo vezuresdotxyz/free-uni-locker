@@ -1,2 +1,3 @@
 # free-uni-locker
-A free uniswap v2/v3/v4 locker. Hosted as a public good. (GNU-GPLv3)
+
+A free uniswap v2/v3/v4 locker. Hosted as a public good. (GNU-GPLv3). Anyone can host the frontend or deploy the contracts and contribute to this repository.

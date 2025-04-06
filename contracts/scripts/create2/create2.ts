@@ -1,4 +1,13 @@
-import { keccak256 } from "ethers";
+import { ethers, keccak256 } from "ethers";
+
+export const buildBytecode = (
+  constructorTypes: any[],
+  constructorArgs: any[],
+  contractBytecode: string
+) =>
+  `${contractBytecode}${encodeParams(constructorTypes, constructorArgs).slice(
+    2
+  )}`;
 
 const buildCreate2Address = (
   factoryAddress: string,
@@ -12,20 +21,29 @@ const buildCreate2Address = (
   ).slice(-40)}`.toLowerCase();
 };
 
-// Predicts the address for an EIP-1167 minimal proxy clone using cloneDeterministic
-export function getPredictedCloneAddress({
-  implementation,
-  salt,
-  deployer,
-}: {
-  implementation: string;
-  salt: string;
-  deployer: string;
-}) {
-  // This is the EIP-1167 minimal proxy bytecode with implementation address
-  const minimalProxyBytecode = `0x3d602d80600a3d3981f3363d3d373d3d3d363d73${implementation
-    .slice(2)
-    .toLowerCase()}5af43d82803e903d91602b57fd5bf3`;
+const saltToHex = (salt: string | number) => ethers.id(salt.toString());
 
-  return buildCreate2Address(deployer, salt, minimalProxyBytecode);
+const encodeParams = (dataTypes: any[], data: any[]) => {
+  const abiCoder = new ethers.AbiCoder();
+  return abiCoder.encode(dataTypes, data);
+};
+
+export function getCreate2Address({
+  factoryAddress,
+  salt,
+  contractBytecode,
+  constructorTypes = [] as string[],
+  constructorArgs = [] as any[],
+}: {
+  salt: string;
+  factoryAddress: string;
+  contractBytecode: string;
+  constructorTypes?: string[];
+  constructorArgs?: any[];
+}) {
+  return buildCreate2Address(
+    factoryAddress,
+    salt,
+    buildBytecode(constructorTypes, constructorArgs, contractBytecode)
+  );
 }

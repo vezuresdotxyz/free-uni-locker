@@ -11,7 +11,7 @@ export async function waitForTx(
   tx: TransactionResponse,
   confirmations = 1
 ): Promise<TransactionReceipt | null> {
-  console.log("waiting for tx", tx.hash);
+  console.log("waiting for tx", tx.hash, "confirmations needed", confirmations);
   return await tx.wait(confirmations);
 }
 

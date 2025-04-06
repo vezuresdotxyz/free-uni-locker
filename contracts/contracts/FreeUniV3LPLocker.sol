@@ -28,7 +28,7 @@ import {
 import {IClPoolFactory} from "contracts/interfaces/thirdparty/IClPoolFactory.sol";
 
 /// @title FreeUniV3LPLocker
-/// @notice Contract for locking Uniswap V3 LP positions
+/// @notice A free and open source contract for locking Uniswap V3 LP positions
 /// @dev Implements the IFreeUniV3LPLocker interface
 contract FreeUniV3LPLocker is IFreeUniV3LPLocker, ReentrancyGuard, Context {
   using SafeERC20 for IERC20;
@@ -241,6 +241,7 @@ contract FreeUniV3LPLocker is IFreeUniV3LPLocker, ReentrancyGuard, Context {
     return liquidity;
   }
 
+  /// @inheritdoc IERC721Receiver
   function onERC721Received(address, address from, uint256 tokenId, bytes calldata data)
     external
     override
